@@ -59,6 +59,7 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
     private String language;
 
     private ImageButton toggleReco;
+    private boolean toggleRecoEnabled;
 
     private ProgressBar volumeBar;
 
@@ -66,9 +67,13 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
     private Transaction recoTransaction;
     private State state = State.IDLE;
 
-    private String[] myStringArray;
+    private TextView userDisplay;
 
-    ListView myList;
+    private Button sendBtn;
+    private Button cancelBtn;
+
+    private TextView textStaticCount;
+    private TextView textCountDown;
 
 
     @Override
@@ -76,12 +81,47 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nlu);
 
-        myStringArray = new String[10];
+        userDisplay = (TextView) findViewById(R.id.text_box_nlu);
+        userDisplay.setText("Waiting for input");
 
-        String[] myStringArray = {"Result 1", "Result 2", "Result 3"};
-        ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, myStringArray);
-        myList = (ListView) findViewById(R.id.listView);
-        myList.setAdapter(myAdapter);
+        textStaticCount = (TextView) findViewById(R.id.staticCount);
+        textStaticCount.setVisibility(View.INVISIBLE);
+        textCountDown = (TextView) findViewById(R.id.textCountDown);
+        textCountDown.setVisibility(View.INVISIBLE);
+
+        sendBtn = (Button) findViewById(R.id.btn_send);
+        cancelBtn = (Button) findViewById(R.id.btn_cancel);
+
+        sendBtn.setVisibility(View.INVISIBLE);
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+
+                userDisplay.setText("Waiting for input");
+                sendBtn.setVisibility(View.INVISIBLE);
+                cancelBtn.setVisibility(View.INVISIBLE);
+                toggleReco.setBackgroundColor(Color.GRAY);
+                toggleRecoEnabled = true;
+                textStaticCount.setVisibility(View.INVISIBLE);
+                textCountDown.setVisibility(View.INVISIBLE);
+            }
+        });
+        cancelBtn.setVisibility(View.INVISIBLE);
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+
+                userDisplay.setText("Waiting for input");
+                sendBtn.setVisibility(View.INVISIBLE);
+                cancelBtn.setVisibility(View.INVISIBLE);
+                toggleReco.setBackgroundColor(Color.GRAY);
+                toggleRecoEnabled = true;
+                textStaticCount.setVisibility(View.INVISIBLE);
+                textCountDown.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        toggleRecoEnabled = true;
 
         //nluContextTag = "M1718_A913_V1";
         nluContextTag = "newapp";
@@ -102,15 +142,37 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-        if (v == toggleReco) {
+        if (v == toggleReco && toggleRecoEnabled) {
             toggleReco();
-        }
-        else if (v == myList.findViewById(R.id.list)) {
-
         }
     }
 
+    //Timer for 1 second
+    private Runnable mMyRunnable = new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            int timeLeft = Integer.parseInt(textCountDown.getText().toString());
+            if (timeLeft > 1){
+                timeLeft -= 1;
+                textCountDown.setText(String.valueOf(timeLeft));
+                Handler myHandler = new Handler();
+                myHandler.postDelayed(mMyRunnable, 1000);
+            }
+            else {
 
+
+                userDisplay.setText("Waiting for input");
+                sendBtn.setVisibility(View.INVISIBLE);
+                cancelBtn.setVisibility(View.INVISIBLE);
+                toggleReco.setBackgroundColor(Color.GRAY);
+                toggleRecoEnabled = true;
+                textStaticCount.setVisibility(View.INVISIBLE);
+                textCountDown.setVisibility(View.INVISIBLE);
+            }
+        }
+    };
 
     /* Reco transactions */
 
@@ -120,10 +182,6 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
                 recognize();
                 break;
             case LISTENING:
-                myStringArray = new String[] {"Result 18934", "Result 2435", "Result 358948"};
-                ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, myStringArray);
-                ListView myList = (ListView) findViewById(R.id.listView);
-                myList.setAdapter(myAdapter);
                 stopRecording();
                 break;
             case PROCESSING:
@@ -196,7 +254,7 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
         public void onRecognition(Transaction transaction, Recognition recognition) {
             //logs.append("\nonRecognition: " + recognition.getText());
 
-            Log.d("smh", "Non Recognition: " + recognition.getText());
+            Log.d("smh", "We recognized it: " + recognition.getText());
             //We have received a transcription of the users voice from the server.
             setState(State.IDLE);
         }
@@ -206,8 +264,23 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
             try {
                 //logs.append("\nonInterpretation: " + interpretation.getResult().toString(2));
 
-                Log.d("smh", "Non Interpretation: " + interpretation.getResult().toString(2));
+                Log.d("smh", "We interpreted it: " + interpretation.getResult().toString(2));
+
+
                 //THIS IS WHERE WE PARSE THE JSON OBJECT
+
+
+                userDisplay.setText("Pretend that your message is here"); //Todo
+
+                toggleRecoEnabled = false;
+                toggleReco.setBackgroundColor(Color.rgb(24, 35, 57));
+                sendBtn.setVisibility(View.VISIBLE);
+                cancelBtn.setVisibility(View.VISIBLE);
+                textStaticCount.setVisibility(View.VISIBLE);
+                textCountDown.setVisibility(View.VISIBLE);
+                textCountDown.setText("5");
+                Handler myHandler = new Handler();
+                myHandler.postDelayed(mMyRunnable, 1000);
 
 
             } catch (JSONException e) {
@@ -232,6 +305,9 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
             //logs.append("\nonError: " + e.getMessage() + ". " + s);
 
             Log.d("smh", "On Error: " + e.getMessage() + ". " + s);
+
+            userDisplay.setText("There was an error in communicating with our servers. Please check your connectivity.");
+
             //Something went wrong. Check Configuration.java to ensure that your settings are correct.
             //The user could also be offline, so be sure to handle this case appropriately.
             //We will simply reset to the idle state.
@@ -301,16 +377,17 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
         state = newState;
         switch (newState) {
             case IDLE:
-                //toggleReco.setText(getResources().getString(R.string.recognize_with_service)); Todo: Replace with images
-                toggleReco.setBackgroundColor(Color.GRAY);
+                //toggleReco.setBackgroundColor(Color.GRAY);
                 break;
             case LISTENING:
-                //toggleReco.setText(getResources().getString(R.string.listening));
+                userDisplay.setText("Listening...");
                 toggleReco.setBackgroundColor(Color.rgb(51, 181, 229));
+                toggleRecoEnabled = false;
                 break;
             case PROCESSING:
-                //toggleReco.setText(getResources().getString(R.string.processing));
+                userDisplay.setText("Processing...");
                 toggleReco.setBackgroundColor(Color.rgb(24, 35, 57));
+                toggleRecoEnabled = false;
                 break;
         }
     }

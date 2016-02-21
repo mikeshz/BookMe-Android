@@ -29,13 +29,63 @@
         android:textSize="24dp"
         android:layout_centerHorizontal="true" />
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/toggle_reco"
-        android:layout_below="@id/text_box_nlu"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:paddingLeft="4.0dip"
+        android:paddingRight="4.0dip"
+        android:paddingBottom="5dip"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_above="@+id/linear1">
+
+        <TextView
+            android:id="@+id/staticCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:text="Sending in: "
+            style="@style/Label"
+            android:textSize="24dp"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/textCountDown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="5"
+            style="@style/Label"
+            android:textSize="24dp"
+            android:layout_centerHorizontal="true" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linear1"
+        android:orientation="horizontal"
+        android:paddingLeft="4.0dip"
+        android:paddingRight="4.0dip"
+        android:paddingBottom="5dip"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_above="@+id/toggle_reco">
+
+        <Button
+            android:id="@+id/btn_send"
+            android:layout_width="0.0dip"
+            android:layout_height="250px"
+            android:text="Send"
+            android:layout_weight="1.0" />
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="0.0dip"
+            android:layout_height="250px"
+            android:text="Cancel"
+            android:layout_weight="1.0" />
+
+    </LinearLayout>
 
 
     <ImageButton
