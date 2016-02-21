@@ -1,7 +1,9 @@
 package com.nuance.speechkitsample;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -46,6 +48,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         configButton = inflateRowView("Configuration", "Host URL, App ID, etc", misc);
         aboutButton = inflateRowView("About", "Learn more about SpeechKit", misc);*/
+
+        //Gets current location
+        LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+
+        LocationFinder locationListener = new LocationFinder();
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
     }
 

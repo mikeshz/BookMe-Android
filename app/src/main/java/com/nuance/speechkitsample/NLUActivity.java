@@ -68,6 +68,8 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
 
     private String[] myStringArray;
 
+    ListView myList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +80,7 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
 
         String[] myStringArray = {"Result 1", "Result 2", "Result 3"};
         ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, myStringArray);
-        ListView myList = (ListView) findViewById(R.id.listView);
+        myList = (ListView) findViewById(R.id.listView);
         myList.setAdapter(myAdapter);
 
         nluContextTag = "M1718_A913_V1";
@@ -102,7 +104,12 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
         if (v == toggleReco) {
             toggleReco();
         }
+        else if (v == myList.findViewById(R.id.list)) {
+
+        }
     }
+
+
 
     /* Reco transactions */
 
