@@ -12,6 +12,8 @@
 
     <string name="title_activity_audio">Audio Playback</string>
 
+    <string name="app_capability_url">https://thebookme.herokuapp.com/token</string>
+
     <string name="title_activity_config">Configuration</string>
     <string name="title_activity_about">About</string>
 

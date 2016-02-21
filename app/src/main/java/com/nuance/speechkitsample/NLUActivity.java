@@ -83,7 +83,8 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
         myList = (ListView) findViewById(R.id.listView);
         myList.setAdapter(myAdapter);
 
-        nluContextTag = "M1718_A913_V1";
+        //nluContextTag = "M1718_A913_V1";
+        nluContextTag = "newapp";
         language = "eng-USA";
 
         toggleReco = (ImageButton) findViewById(R.id.toggle_reco);
