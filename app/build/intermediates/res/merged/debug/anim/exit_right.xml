@@ -1,0 +1,7 @@
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="false">
+    <translate
+        android:fromXDelta="0%" android:toXDelta="100%"
+        android:fromYDelta="0%" android:toYDelta="0%"
+        android:duration="250" />
+</set><!-- From: file:/home/michael/Downloads/sample/app/src/main/res/anim/exit_right.xml -->
