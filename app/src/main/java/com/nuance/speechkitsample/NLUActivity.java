@@ -68,6 +68,7 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
     private State state = State.IDLE;
 
     private TextView userDisplay;
+    private TextView userInputTxt;
 
     private Button sendBtn;
     private Button cancelBtn;
@@ -75,6 +76,8 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
     private TextView textStaticCount;
     private TextView textCountDown;
 
+    private String stdoutput;
+    private String restaurant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,7 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
 
         userDisplay = (TextView) findViewById(R.id.text_box_nlu);
         userDisplay.setText("Waiting for input");
+        userInputTxt = (TextView) findViewById(R.id.text_usrinput);
 
         textStaticCount = (TextView) findViewById(R.id.staticCount);
         textStaticCount.setVisibility(View.INVISIBLE);
@@ -95,22 +99,12 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
         sendBtn.setVisibility(View.INVISIBLE);
         sendBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-
-                userDisplay.setText("Waiting for input");
-                sendBtn.setVisibility(View.INVISIBLE);
-                cancelBtn.setVisibility(View.INVISIBLE);
-                toggleReco.setBackgroundColor(Color.GRAY);
-                toggleRecoEnabled = true;
-                textStaticCount.setVisibility(View.INVISIBLE);
-                textCountDown.setVisibility(View.INVISIBLE);
+                sendData();
             }
         });
         cancelBtn.setVisibility(View.INVISIBLE);
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-
                 userDisplay.setText("Waiting for input");
                 sendBtn.setVisibility(View.INVISIBLE);
                 cancelBtn.setVisibility(View.INVISIBLE);
@@ -118,6 +112,7 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
                 toggleRecoEnabled = true;
                 textStaticCount.setVisibility(View.INVISIBLE);
                 textCountDown.setVisibility(View.INVISIBLE);
+                userInputTxt.setText("");
             }
         });
 
@@ -161,15 +156,7 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
                 myHandler.postDelayed(mMyRunnable, 1000);
             }
             else {
-
-
-                userDisplay.setText("Waiting for input");
-                sendBtn.setVisibility(View.INVISIBLE);
-                cancelBtn.setVisibility(View.INVISIBLE);
-                toggleReco.setBackgroundColor(Color.GRAY);
-                toggleRecoEnabled = true;
-                textStaticCount.setVisibility(View.INVISIBLE);
-                textCountDown.setVisibility(View.INVISIBLE);
+                sendData();
             }
         }
     };
@@ -207,6 +194,30 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
         //Start listening
         //recoTransaction = speechSession.recognizeWithService(nluContextTag.getText().toString(), appServerData, options, recoListener);
         recoTransaction = speechSession.recognizeWithService(nluContextTag, appServerData, options, recoListener);
+    }
+
+    private void sendData(){
+        userDisplay.setText("Waiting for input");
+        sendBtn.setVisibility(View.INVISIBLE);
+        cancelBtn.setVisibility(View.INVISIBLE);
+        toggleReco.setBackgroundColor(Color.GRAY);
+        toggleRecoEnabled = true;
+        textStaticCount.setVisibility(View.INVISIBLE);
+        textCountDown.setVisibility(View.INVISIBLE);
+        userInputTxt.setText("");
+
+        if (restaurant.equals("Moxy's")){
+
+        }
+        else if (restaurant.equals("The Keg")){
+
+        }
+        else if (restaurant.equals("Montana's")){
+
+        }
+
+        //Send data if we could
+        //send stdoutput
     }
 
     private Transaction.Listener recoListener = new Transaction.Listener() {
@@ -255,6 +266,9 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
             //logs.append("\nonRecognition: " + recognition.getText());
 
             Log.d("smh", "We recognized it: " + recognition.getText());
+
+            userInputTxt.setText("\"" + recognition.getText() + "\"");
+
             //We have received a transcription of the users voice from the server.
             setState(State.IDLE);
         }
@@ -267,22 +281,35 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
                 Log.d("smh", "We interpreted it: " + interpretation.getResult().toString(2));
 
 
-                //THIS IS WHERE WE PARSE THE JSON OBJECT
+                JSONObject obj = interpretation.getResult();
 
+                JSONObject best_interpretation = obj.getJSONArray("interpretations").getJSONObject(0);
+                JSONObject concepts = best_interpretation.getJSONObject("concepts");
+                String attendees = "";
+                restaurant = "";
+                String timerange = "";
 
-                userDisplay.setText("Pretend that your message is here"); //Todo
+                if (concepts.has("Attendees") && concepts.has("Restaurant") && concepts.has("DURATION_RANGE")) {
+                    attendees = concepts.getJSONArray("Attendees").getJSONObject(0).getString("literal");
+                    restaurant = concepts.getJSONArray("Restaurant").getJSONObject(0).getString("literal");
+                    timerange = concepts.getJSONArray("DURATION_RANGE").getJSONObject(0).getString("literal");
 
-                toggleRecoEnabled = false;
-                toggleReco.setBackgroundColor(Color.rgb(24, 35, 57));
-                sendBtn.setVisibility(View.VISIBLE);
-                cancelBtn.setVisibility(View.VISIBLE);
-                textStaticCount.setVisibility(View.VISIBLE);
-                textCountDown.setVisibility(View.VISIBLE);
-                textCountDown.setText("5");
-                Handler myHandler = new Handler();
-                myHandler.postDelayed(mMyRunnable, 1000);
+                    stdoutput = "I will like to book a table for " + attendees + "  between " + timerange;
 
+                    toggleRecoEnabled = false;
+                    toggleReco.setBackgroundColor(Color.rgb(24, 35, 57));
+                    sendBtn.setVisibility(View.VISIBLE);
+                    cancelBtn.setVisibility(View.VISIBLE);
+                    textStaticCount.setVisibility(View.VISIBLE);
+                    textCountDown.setVisibility(View.VISIBLE);
+                    textCountDown.setText("5");
+                    Handler myHandler = new Handler();
+                    myHandler.postDelayed(mMyRunnable, 1000);
+                }
 
+                else {
+                    userDisplay.setText("Not enough information. Please give the name of the restaunt, the number of people you're booking the table for and the time range.");
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -377,10 +404,10 @@ public class NLUActivity extends DetailActivity implements View.OnClickListener 
         state = newState;
         switch (newState) {
             case IDLE:
-                //toggleReco.setBackgroundColor(Color.GRAY);
                 break;
             case LISTENING:
                 userDisplay.setText("Listening...");
+                userInputTxt.setText("");
                 toggleReco.setBackgroundColor(Color.rgb(51, 181, 229));
                 toggleRecoEnabled = false;
                 break;

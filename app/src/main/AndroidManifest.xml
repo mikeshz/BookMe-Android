@@ -27,16 +27,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TextNLUActivity"
-            android:label="@string/title_activity_text_nlu"
-            android:parentActivityName=".MainActivity"
-            android:windowSoftInputMode="stateHidden|adjustResize">
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />>
-        </activity>
-        <activity
             android:name=".TTSActivity"
             android:label="@string/title_activity_tts"
             android:parentActivityName=".MainActivity"
