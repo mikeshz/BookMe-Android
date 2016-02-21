@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context="sample.nuance.com.speechkitsample.ASRActivity">
+
+
+
+    <ProgressBar
+        android:id="@+id/volume_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/logs_container"
+        android:layout_marginTop="-6dp"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:progress="0"
+        android:max="100" />
+
+    <TextView
+        android:id="@+id/text_box_nlu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:text="@string/text_input_label"
+        style="@style/Label"
+        android:textSize="24dp"
+        android:layout_centerHorizontal="true" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/toggle_reco"
+        android:layout_below="@id/text_box_nlu"/>
+
+
+    <ImageButton
+        android:id="@+id/toggle_reco"
+        android:layout_alignParentBottom="true"
+        android:layout_width="160dp"
+        android:layout_height="144dp"
+        android:src="@drawable/ic_keyboard_voice_24dp"
+        android:scaleType="fitXY"
+        android:layout_centerHorizontal="true" />
+
+
+
+
+</RelativeLayout>
